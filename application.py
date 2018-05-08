@@ -11,7 +11,7 @@ def hello():
     return "Hello World!"
 
 #example API function
-#curl -d @"data.json" -X POST http://localhost:5000/num/3 -H "Content-Type: application/json"
+#curl -d @"testdata.json" -X POST http://localhost:5000/num/3 -H "Content-Type: application/json"
 
 @application.route('/num/<int>', methods=['GET', 'POST'])
 def thricer(int): 
