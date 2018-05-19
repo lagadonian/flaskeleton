@@ -45,9 +45,16 @@ if they add up to more than 10 and worker is new, sends an error otherwise.
 pickled TEST needs to be stored on blockchain and referenced in work manifest
 then, worker() needs to be agnostic about what test it is running
 """
-@application.route('/work1/work', methods=['GET', 'POST'])
-def worker(): 
+
+
+
+@application.route('/<job>/work', methods=['GET', 'POST'])
+def worker(job): 
+    instructions = getattr(tests, job+'i')
+    tester = getattr(tests, job+'t')
+
     if (request.method == 'POST'):
+        
 
         msg_json = request.get_json()
         address = str(msg_json["ad"])
@@ -57,10 +64,11 @@ def worker():
         rewardKey = 839330039930
 
         ads = mongo.db.ads
-        flag = ads.find_one({"ad": address})
+        flag = ads.find_one({"ad": address, "job": job})
+        testresult = tester(data)
 
-        if not flag and tests.aboveten(data):
-            ads.insert({'ad': address})
+        if not flag and testresult:
+            ads.insert({'ad': address, "job": job})
             return jsonify({'reward': rewardKey})
         else: 
             if flag: 
@@ -69,17 +77,15 @@ def worker():
 
 
     else:
-        return jsonify({'instructions': 'include parameters ad (stellar address) and'+
-                        ' num1 (int), num2 (int), num3 (int)'+
-                        ', adding to more than 10.'})
+        return jsonify({'instructions': instructions})
 
 
 
 #testing worker
 #curl -d @"stestdata1.json" -X POST http://localhost:5000/work1/check -H "Content-Type: application/json"
 #curl -d @"stestdata2.json" -X POST http://localhost:5000/work1/check -H "Content-Type: application/json"
-@application.route('/work1/check', methods=['GET', 'POST'])
-def sworker(): 
+@application.route('/<job>/check', methods=['GET', 'POST'])
+def checker(): 
     if (request.method == 'POST'):
         msg_json = request.get_json()
         address = str(msg_json["ad"])
