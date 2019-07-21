@@ -12,7 +12,7 @@ application = Flask(__name__)
 
 application.config['MONGO_DBNAME'] = 'restdb'
 #https://mlab.com/databases/restdb#users
-application.config['MONGO_URI'] = 'mongodb://lagadonian:lagadonian@ds157057.mlab.com:57057/restdb'
+application.config['MONGO_URI'] = 'mongodb://<username>:<password>@ds157057.mlab.com:57057/restdb'
 
 mongo = PyMongo(application)
 
